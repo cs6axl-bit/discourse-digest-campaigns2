@@ -1,0 +1,14 @@
+Activity Summary
+
+Campaign: <%= @campaign_key.presence || "(none)" %>
+User: <%= @user.username %>
+
+Topics:
+<% @topic_ids.each_with_index do |tid, idx| %>
+  <% info = @topic_map[tid] %>
+  <% if info %>
+<%= idx + 1 %>. <%= info[:title] %> (#<%= tid %>) - <%= topic_url(tid, info[:slug]) %>
+  <% else %>
+<%= idx + 1 %>. Topic #<%= tid %> (not found)
+  <% end %>
+<% end %>

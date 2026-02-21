@@ -1,0 +1,56 @@
+plugins:
+  digest_campaigns_enabled:
+    default: true
+    client: false
+    type: bool
+
+  digest_campaigns_poller_every_minutes:
+    default: 1
+    min: 1
+    max: 60
+    client: false
+    type: integer
+
+  digest_campaigns_claim_rows_per_run:
+    default: 2000
+    min: 1
+    max: 20000
+    client: false
+    type: integer
+
+  digest_campaigns_batch_chunk_size:
+    default: 25
+    min: 1
+    max: 500
+    client: false
+    type: integer
+
+  # For 50k in 3 hours: ~278/min. Use 300/min headroom.
+  digest_campaigns_target_per_minute:
+    default: 300
+    min: 1
+    max: 5000
+    client: false
+    type: integer
+
+  digest_campaigns_processing_stale_minutes:
+    default: 60
+    min: 5
+    max: 1440
+    client: false
+    type: integer
+
+  digest_campaigns_only_campaign_key:
+    default: ""
+    client: false
+    type: string
+
+  digest_campaigns_subject_prefix:
+    default: "[Campaign Digest]"
+    client: false
+    type: string
+
+  digest_campaigns_respect_digest_unsubscribe:
+    default: true
+    client: false
+    type: bool

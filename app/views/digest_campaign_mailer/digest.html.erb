@@ -1,0 +1,30 @@
+<h2 style="margin:0 0 10px 0;">Activity Summary</h2>
+
+<p style="margin:0 0 14px 0; color:#666;">
+  Campaign: <strong><%= ERB::Util.html_escape(@campaign_key.presence || "(none)") %></strong><br>
+  User: <strong><%= ERB::Util.html_escape(@user.username) %></strong>
+</p>
+
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
+  <% @topic_ids.each do |tid| %>
+    <% info = @topic_map[tid] %>
+    <tr>
+      <td style="padding:12px 0; border-bottom:1px solid #e6e6e6;">
+        <% if info %>
+          <div style="font-size:16px; line-height:1.3; margin:0 0 4px 0;">
+            <a href="<%= topic_url(tid, info[:slug]) %>" style="text-decoration:none;">
+              <%= ERB::Util.html_escape(info[:title]) %>
+            </a>
+          </div>
+          <div style="color:#999; font-size:12px;">Topic #<%= tid %></div>
+        <% else %>
+          <div style="font-size:16px; line-height:1.3;">Topic #<%= tid %> <span style="color:#b00;">(not found)</span></div>
+        <% end %>
+      </td>
+    </tr>
+  <% end %>
+</table>
+
+<hr>
+
+%{unsubscribe_instructions}

@@ -1,0 +1,161 @@
+<section class="admin-container">
+  <h1>Digest Campaigns</h1>
+
+  {{#if this.error}}
+    <div class="alert alert-error">{{this.error}}</div>
+  {{/if}}
+
+  {{#if this.notice}}
+    <div class="alert alert-success">{{this.notice}}</div>
+  {{/if}}
+
+  <div style="margin: 10px 0;">
+    <button class="btn btn-primary" {{on "click" this.refreshNow}} disabled={{this.busy}}>
+      Refresh
+    </button>
+  </div>
+
+  <hr>
+
+  <h2>Create Campaign</h2>
+
+  <div class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label">campaign_key</label>
+      <div class="controls">
+        <Input @value={{this.campaign_key}} class="input-xxlarge" placeholder="blast_2026_02_23" />
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">selection_sql (returns user_id)</label>
+      <div class="controls">
+        <Textarea
+          @value={{this.selection_sql}}
+          class="input-xxlarge"
+          rows="6"
+          placeholder="SELECT u.id AS user_id FROM users u WHERE u.active = true"
+        />
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">topic_set_1</label>
+      <div class="controls">
+        <Input @value={{this.topic_set_1}} class="input-xxlarge" placeholder="3782,1351,1423,1374" />
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">topic_set_2</label>
+      <div class="controls">
+        <Input @value={{this.topic_set_2}} class="input-xxlarge" placeholder="optional" />
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">topic_set_3</label>
+      <div class="controls">
+        <Input @value={{this.topic_set_3}} class="input-xxlarge" placeholder="optional" />
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">send_at (optional)</label>
+      <div class="controls">
+        <Input @value={{this.send_at}} @type="datetime-local" class="input-large" />
+        <div class="help-block">
+          If set, queued rows won’t send until this time.
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label">test_email (optional)</label>
+      <div class="controls">
+        <Input @value={{this.test_email}} class="input-xlarge" placeholder="you@domain.com" />
+        <div class="help-block">
+          Sends one test immediately (ignores send_at).
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-primary" {{on "click" this.createCampaign}} disabled={{this.busy}}>
+        Create + Populate Queue
+      </button>
+    </div>
+  </div>
+
+  <hr>
+
+  <h2>Existing Campaigns</h2>
+
+  {{#if this.campaigns.length}}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Enabled</th>
+          <th>send_at</th>
+          <th>Queued</th>
+          <th>Processing</th>
+          <th>Sent</th>
+          <th>Failed</th>
+          <th>Skipped</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {{#each this.campaigns as |c|}}
+          <tr>
+            <td><code>{{c.campaign_key}}</code></td>
+            <td>{{c.enabled}}</td>
+            <td>{{c.send_at}}</td>
+            <td>{{c.queued_count}}</td>
+            <td>{{c.processing_count}}</td>
+            <td>{{c.sent_count}}</td>
+            <td>{{c.failed_count}}</td>
+            <td>{{c.skipped_unsubscribed_count}}</td>
+            <td>
+              {{#if c.enabled}}
+                <button class="btn" {{on "click" (fn this.disableCampaign c.id)}} disabled={{this.busy}}>Disable</button>
+              {{else}}
+                <button class="btn btn-primary" {{on "click" (fn this.enableCampaign c.id)}} disabled={{this.busy}}>Enable</button>
+              {{/if}}
+
+              <button class="btn btn-danger" {{on "click" (fn this.deleteCampaign c.id)}} disabled={{this.busy}}>
+                Delete
+              </button>
+
+              <div style="margin-top:6px;">
+                <input
+                  class="input-medium"
+                  placeholder="test email"
+                  value={{get this.testEmailById c.id}}
+                  {{on "input" (fn this.onTestEmailInput c.id)}}
+                />
+                <button class="btn" {{on "click" (fn this.testSend c.id)}} disabled={{this.busy}}>
+                  Test Send
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          {{#if c.last_error}}
+            <tr>
+              <td colspan="9">
+                <div class="alert alert-error">
+                  <strong>Last error:</strong> {{c.last_error}}
+                </div>
+              </td>
+            </tr>
+          {{/if}}
+        {{/each}}
+      </tbody>
+    </table>
+  {{else}}
+    <p>No campaigns yet.</p>
+  {{/if}}
+</section>
